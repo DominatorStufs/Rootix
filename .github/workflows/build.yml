@@ -1,13 +1,13 @@
 name: Build & Release Rootix
 
-# Manual trigger only - go to the "Actions" tab on GitHub and click "Run workflow".
 on:
   workflow_dispatch:
 
-# Bump this for every new release. This is the single place that controls
-# the release/tag name that the built APKs get uploaded to.
 env:
   RELEASE_VERSION: v1
+
+permissions:
+  contents: write
 
 jobs:
   build:
