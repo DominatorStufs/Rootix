@@ -1,4 +1,4 @@
-name: Build & Release Rootix launcher
+name: Build & Release Rootix
 
 # Manual trigger only - go to Actions tab -> "Build & Release Rootix" -> "Run workflow"
 on:
@@ -14,6 +14,9 @@ permissions:
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
+
+    env:
+      HAS_KEYSTORE: ${{ secrets.KEYSTORE_BASE64 != '' }}
 
     steps:
       - name: Checkout repository
@@ -40,11 +43,11 @@ jobs:
       # signing key is used. Otherwise a throwaway keystore is generated so the
       # build still succeeds (fine for testing, NOT for a real Play Store release).
       - name: Decode signing keystore from secret
-        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
+        if: env.HAS_KEYSTORE == 'true'
         run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.jks
 
       - name: Generate throwaway keystore (no KEYSTORE_BASE64 secret set)
-        if: ${{ secrets.KEYSTORE_BASE64 == '' }}
+        if: env.HAS_KEYSTORE == 'false'
         run: |
           keytool -genkeypair -v \
             -keystore release.jks \
